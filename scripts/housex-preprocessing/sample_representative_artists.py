@@ -93,11 +93,11 @@ def main(input_parent_dir_path:str, output_file_path:str, k:int = 4) -> None:
     if ".txt" not in output_file_path:
         output_file_path = output_file_path + ".txt"
     with open(output_file_path, "w") as f:
-        for k in SELECTED_DICT:
-            f.write(f'{k}\n')
+        for _k in SELECTED_DICT:
+            f.write(f'{_k}\n')
             f.write('-'*40)
             f.write('\n')
-            for artist_name in SELECTED_DICT[k]:
+            for artist_name in SELECTED_DICT[_k]:
                 f.write(f'{artist_name}')
             f.write('\n')
 
