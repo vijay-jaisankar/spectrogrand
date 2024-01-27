@@ -51,3 +51,15 @@ class CreativeNet(nn.Module):
         x = F.leaky_relu(self.fc3(x))
         x = torch.sigmoid(x)
         return x
+    
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device {device}")
+
+    MODEL_ARGS = {
+        "train_baseline_classifier" : False, 
+        "num_output_classes" : 2,
+        "dropout_rate" : 0.35
+    }
+
+    model = CreativeNet(**MODEL_ARGS).to(device)
