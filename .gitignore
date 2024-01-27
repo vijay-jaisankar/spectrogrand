@@ -162,3 +162,7 @@ cython_debug/
 # `data` folder
 data
 data/*
+
+# Zip archives
+**/*.zip
+*.zip
