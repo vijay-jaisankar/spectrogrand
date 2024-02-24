@@ -1,10 +1,9 @@
 """
-    Bulk rename HouseX images into `0.jpg`, `1.jpg`, ...
+    Bulk rename images into {genre}_{idx}.jpg
 """
 
 import argparse
 import os
-from tqdm import tqdm
 
 # Bulk rename directory
 # @note For HouseX spectrogram processing, `full_dir_path` should be /path/to/housex/{train|test|val}
@@ -17,12 +16,24 @@ def bulk_rename_dir(full_dir_path:str, verbose:bool = False):
     if verbose:
         print(f"Processing {len(files)} files")
 
+    # Store mapping of genre:last_seen_index
+    genre_idx_mapping = {}
+
     # Enumerate and rename in place
     for idx, f in enumerate(files):
+
+        # Get selected index
+        song_type = f.split("-")[0]
+        if song_type not in genre_idx_mapping:
+            genre_idx_mapping[song_type] = 0
+        else:
+            genre_idx_mapping[song_type] += 1
+
+        chosen_index = genre_idx_mapping[song_type]
         try:
             os.rename(
                 os.path.join(full_dir_path, f),
-                os.path.join(full_dir_path, f"{str(idx)}.jpg")
+                os.path.join(full_dir_path, f"{song_type}_{str(chosen_index)}.jpg")
             )
         except Exception as e:
             print(f"Error obtained while renaming {f}")
