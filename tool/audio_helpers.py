@@ -9,7 +9,7 @@ import librosa
 import pickle
 
 import torch
-torch.random_seed(42)
+torch.random.manual_seed(42)
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 from transformers import ClapModel, ClapProcessor
@@ -141,3 +141,18 @@ def compute_clap_similarity(input_file_path:str, ground_truth_dict_path:str, fil
     except Exception as e:
         print(f"Error while computing CLAP similarity score for {input_file_path}: {e}")
         return None
+    
+"""
+    @method load_wav_chunk
+        Load a time-defined chunk of audio from a wav file
+    @param input_file_path: Path to the input wav file
+    @param chunk_offset: Timestamp (in s) from which the chunk starts
+    @param chunk_duration: Duration of the returned chunk (in s) (default: 0.1)
+"""
+def load_wav_chunk(input_file_path:str, chunk_offset:float, chunk_duration:float=0.1):
+    try:
+        y, sr = librosa.load(path=input_file_path, offset=float(chunk_offset), duration=float(chunk_duration), sr=None)
+        return sr, y
+    except Exception as e:
+        print(f"Error while loading chunk from {input_file_path}: {e}")
+        return None, None
