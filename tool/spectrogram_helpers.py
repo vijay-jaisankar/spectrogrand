@@ -120,5 +120,5 @@ def get_classified_genre(input_spectrogram_path:str, model_path:str) -> Optional
         selected_genre = IDX_TO_LABEL_MAPPING[selected_index]
         return selected_genre
     except Exception as e:
-        print(f"Error while classifying genre of {input_spectrogram_path}: {e.with_traceback()}")
+        print(f"Error while classifying genre of {input_spectrogram_path}: {e}")
         return None
