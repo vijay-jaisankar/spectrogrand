@@ -72,6 +72,10 @@ def generate_and_save_melspectrogram_stream(input_file_path:str, output_dir:str,
             output_file = generate_and_save_melspectrogram(input_data=y,input_sampling_rate=sr,output_file_path=output_file)
             if output_file is not None:
                 saved_output_file_names.append(output_file)
+                num_images_generated += 1
+                
+            current_chunk_time_start += chunk_duration
+            current_chunk_time_end += chunk_duration
 
         return saved_output_file_names
 
