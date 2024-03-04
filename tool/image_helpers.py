@@ -4,6 +4,7 @@
 from typing import Optional, List
 from PIL import Image
 from io import BytesIO
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -45,10 +46,12 @@ sdxl_pipeline.to(TORCH_DEVICE)
 vila_model = hub.load('https://tfhub.dev/google/vila/image/1')
 vila_predict_fn = vila_model.signatures['serving_default']
 
+# Load the Magenta pipeline
+magenta_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
+
 # Load the surprise estimation pipeline
 class CreativeNet(nn.Module):
     def __init__(self, train_baseline_classifier = False, num_output_classes = 2, dropout_rate = 0.20):
-        super().__init__()
         
         # Set instance variables
         self.train_baseline_classifier = train_baseline_classifier
@@ -206,3 +209,48 @@ def get_surprise_score(input_image_path:str, model_path:str) -> Optional[str]:
     except Exception as e:
         print(f"Error while classifying genre of {input_image_path}: {e}")
         return None
+    
+"""
+    @method neural_style_transfer_vanilla
+        Perform fast neural style transfer using the Magenta model
+        @note ref: https://www.kaggle.com/models/google/arbitrary-image-stylization-v1/frameworks/tensorFlow1/variations/256/versions/2?tfhub-redirect=true
+    @param content_image_path: Path to the input image that serves as the content image
+    @param style_image_path: Path to the input image that serves as the style image
+    @param output_file_path: Path to which the style transfer output is to be stored 
+"""
+def neural_style_transfer_vanilla(content_image_path:str, style_image_path:str, output_file_path:str) -> Optional[str]:
+    # Nested function to load a PIL image as a TF tensor
+    def load_img(path_to_img):
+        max_dim = 512
+        img = tf.io.read_file(path_to_img)
+        img = tf.image.decode_image(img, channels=3)
+        img = tf.image.convert_image_dtype(img, tf.float32)
+
+        shape = tf.cast(tf.shape(img)[:-1], tf.float32)
+        long_dim = max(shape)
+        scale = max_dim / long_dim
+
+        new_shape = tf.cast(shape * scale, tf.int32)
+
+        img = tf.image.resize(img, new_shape)
+        img = img[tf.newaxis, :]
+        return img
+    
+    # Nested function to convert TF tensor back to PIL image
+    def tensor_to_image(tensor):
+        tensor = tensor*255
+        tensor = np.array(tensor, dtype=np.uint8)
+        if np.ndim(tensor)>3:
+            assert tensor.shape[0] == 1
+            tensor = tensor[0]
+        return Image.fromarray(tensor)
+
+    try:
+        global magenta_model
+        content_image_tensor = load_img(content_image_path)
+        style_image_tensor = load_img(style_image_path)
+        stylised_image_tensor = magenta_model(tf.constant(content_image_tensor), tf.constant(style_image_tensor))[0]
+        stylised_image_pil = tensor_to_image(stylised_image_tensor)
+        stylised_image_pil.save(output_file_path)
+    except Exception as e:
+        print(f"Error while performing vanilla neural style transfer: {e}")
