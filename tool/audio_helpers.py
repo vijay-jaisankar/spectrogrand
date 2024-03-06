@@ -20,7 +20,7 @@ audio_ldm_pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2-music", 
 audio_ldm_pipeline.to(DEVICE)
 
 # Load the CLAP pipeline
-clap_model = ClapModel.from_pretrained("laion/clap-hstat-fused")
+clap_model = ClapModel.from_pretrained("laion/clap-htsat-fused")
 clap_model.to(DEVICE)
 clap_processor = ClapProcessor.from_pretrained("laion/clap-htsat-fused")
 
@@ -116,15 +116,14 @@ def compute_clap_embeddings(input_file_path:str) -> Optional[torch.Tensor]:
 """
 def compute_clap_similarity(input_file_path:str, ground_truth_dict_path:str, filter_genre:Optional[str]=None) -> Optional[float]:
     try:
-        # Convert `filter_genre` into underscore format if required
-        if "_" not in filter_genre: # eg: 'bass house'
-            filter_genre = filter_genre.replace(" ","_")
-
         # Load the embeddings from the ground truth mapping and set the search space
         with open(ground_truth_dict_path, "rb") as f:
             data = pickle.load(f)
         input_search_space_embeds = []
         if filter_genre is not None:
+            # Convert `filter_genre` into underscore format if required
+            if "_" not in filter_genre: # eg: 'bass house'
+                filter_genre = filter_genre.replace(" ","_")
             input_search_space_embeds = data[filter_genre]
         else:
             for _k in data:
