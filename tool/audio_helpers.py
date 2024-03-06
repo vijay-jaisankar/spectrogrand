@@ -116,6 +116,10 @@ def compute_clap_embeddings(input_file_path:str) -> Optional[torch.Tensor]:
 """
 def compute_clap_similarity(input_file_path:str, ground_truth_dict_path:str, filter_genre:Optional[str]=None) -> Optional[float]:
     try:
+        # Convert `filter_genre` into underscore format if required
+        if "_" not in filter_genre: # eg: 'bass house'
+            filter_genre = filter_genre.replace(" ","_")
+
         # Load the embeddings from the ground truth mapping and set the search space
         with open(ground_truth_dict_path, "rb") as f:
             data = pickle.load(f)
