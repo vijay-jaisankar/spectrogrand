@@ -1,0 +1,11 @@
+diffusers
+scipy
+numpy
+librosa
+moviepy
+matplotlib
+pillow
+torch
+torchvision
+tqdm
+transformers
