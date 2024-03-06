@@ -5,6 +5,7 @@ from typing import Optional, List
 from PIL import Image
 from io import BytesIO
 import numpy as np
+from glob import glob
 
 import torch
 import torch.nn as nn
@@ -255,4 +256,43 @@ def neural_style_transfer_vanilla(content_image_path:str, style_image_path:str, 
         return output_file_path
     except Exception as e:
         print(f"Error while performing vanilla neural style transfer: {e}")
+        return None
+    
+"""
+    @method neural_style_transfer_vanilla_stream
+        Perform OvA (one-vs-all) Neural style transfer with a single content/style image and a directory of style/content images
+    @param single_image_path: Path to the single input image that serves as the content image
+    @param stream_image_dir: Path to the directory containing the input images that serves as the content/style images
+    @param ova_mode: Mode of neural style transfer. This parameter takes two values: "style" for single style image and a stream of content images; and "content" for a single content image and a stream of style images
+    @param output_dir: Path to the parent directory where the contiguous melspectrogram images are to be stored
+"""
+def neural_style_transfer_vanilla_stream(single_image_path:str, stream_image_dir:str, ova_mode:str, output_dir:str) -> Optional[List[str]]:
+    try:
+        # Maintain a list of stream image filenames and count of generated images
+        stream_image_filenames = glob(f"{stream_image_dir}/*")
+        assert len(stream_image_filenames) > 0
+
+        # Keep running count of the current time index and number of images generated
+        num_images_generated = 0
+        saved_output_file_names = []
+
+        for stream_image in stream_image_filenames:
+            output_file = f"{output_dir}/nst_{num_images_generated}.png"
+            # Check OvA mode
+            if ova_mode == "style":
+                output_file = neural_style_transfer_vanilla(content_image_path=stream_image,style_image_path=single_image_path,output_file_path=output_file)
+                if output_file is not None:
+                    saved_output_file_names.append(output_file)
+                    num_images_generated += 1
+
+            if ova_mode == "content":
+                output_file = neural_style_transfer_vanilla(content_image_path=single_image_path,style_image_path=stream_image,output_file_path=output_file)
+                if output_file is not None:
+                    saved_output_file_names.append(output_file)
+                    num_images_generated += 1
+
+        return saved_output_file_names
+
+    except Exception as e:
+        print(f"Error while generating and saving neural style transfer image stream: {e}")
         return None
