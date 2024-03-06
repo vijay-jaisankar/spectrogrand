@@ -252,5 +252,7 @@ def neural_style_transfer_vanilla(content_image_path:str, style_image_path:str, 
         stylised_image_tensor = magenta_model(tf.constant(content_image_tensor), tf.constant(style_image_tensor))[0]
         stylised_image_pil = tensor_to_image(stylised_image_tensor)
         stylised_image_pil.save(output_file_path)
+        return output_file_path
     except Exception as e:
         print(f"Error while performing vanilla neural style transfer: {e}")
+        return None
