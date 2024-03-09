@@ -18,9 +18,10 @@ def generate_and_save_video_dynamic(audio_file_path:str, image_dir_path:str, out
             audio_duration = audio_clip.duration
 
             # Create image sequence clip
-            with ImageSequenceClip(sequence=image_dir_path) as image_sequence_clip:
-                image_sequence_clip.set_duration(audio_duration)
-                image_sequence_clip.set_audio(audio_clip)
+            with ImageSequenceClip(sequence=image_dir_path, fps = 10) as image_sequence_clip:
+                image_sequence_clip = image_sequence_clip.set_duration(audio_duration)
+                image_sequence_clip = image_sequence_clip.set_audio(audio_clip)
+                image_sequence_clip = image_sequence_clip.set_fps(10)
 
                 # Export the clip
                 image_sequence_clip.write_videofile(output_video_path)
@@ -44,8 +45,9 @@ def generate_and_save_video_static(audio_file_path:str, image_file_path:str, out
 
             # Create image clip
             with ImageClip(img=image_file_path) as image_clip:
-                image_clip.set_duration(audio_duration) # @note ref: https://stackoverflow.com/questions/75414756/combine-image-and-audio-together-using-moviepy-in-python
-                image_clip.set_audio(audio_clip)
+                image_clip = image_clip.set_duration(audio_duration) # @note ref: https://stackoverflow.com/questions/75414756/combine-image-and-audio-together-using-moviepy-in-python
+                image_clip = image_clip.set_audio(audio_clip)
+                image_clip = image_clip.set_fps(10)
 
                 # Export the clip
                 image_clip.write_videofile(output_video_path)
