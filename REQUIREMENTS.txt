@@ -10,3 +10,4 @@ torchvision
 tqdm
 transformers
 numba
+ffmpeg
