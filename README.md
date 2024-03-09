@@ -5,6 +5,26 @@ SpectroGrand: Generating interesting audiovisuals for text prompts.
 
 ---
 
+## About the project
+[Spectrograms](https://en.wikipedia.org/wiki/Spectrogram#:~:text=A%20spectrogram%20is%20a%20visual,sonographs%2C%20voiceprints%2C%20or%20voicegrams.) are **visual representations of audio samples** often used in Engineering applications as features for various downstream tasks. We unlock the **artistic value of spectrograms** and use them in both scientific and artistic domains through Spectrogrand: a pipeline to generate **interesting melspectrogram-driven audiovisuals** given text topic prompts. We also bake in lightweight **domain-driven computational creativity** assessment throughout steps the generation process.  
+
+In this regard, this pipeline has the following steps:
+- We use [audioldm2-music](https://huggingface.co/cvssp/audioldm2-music) to generate multiple candidate house music songs for the topic text prompt. We then estimate each candidate's **novelty** from human-generated house music songs (collected from the [HouseX](https://github.com/Gariscat/HouseX) dataset.), and select the most novel song for our pipeline.
+- Then, we generate melspectrograms for the song as a whole, and for chunks of the sample. These numerous images convey local intensity and temporal diversity scattered throughout different zones of the song.
+- We use the parent spectrogram to deduce the genre of the song. Our [VGG19-BN based-model with augmented train-time transforms](./research/models/genre_classification.py) is the current SOTA on the HouseX-full-image task 🥳
+- We then use [stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) to generate candidate album covers for this song. The selected genre defines and augments the prompts through selecting base colours and [descriptor words](./public/housex-processing/corpus). We then estimate each candidate's **value** and **surprisingness** based on its aestheticness, and how likely it can fool a strong custom classifier (trained on human-generated and AI-generated album covers) into believing that the candidate is more human-generated. We select the image with the highest equiweighted score for our pipeline.
+- We then use [magenta](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2) to perform arbitrary image style transfer on the selected album cover image and each of the song chunk's melspectrograms.
+- At the end of the pipeline, one can generate **three** audiovisual videos for a given theme text prompt. [Example videos](#outputs-for-prompt-topic-futuristic-spaceship)
+
+---
+
+## Key contributions
+- 📄 New [corpus](./public/housex-processing/corpus/) with [EDMReviewer](https://edmreviewer.com/) reviews for [selected artists from the HouseX dataset](./public/housex-processing/selected_artists.txt) with [LLM-generated descriptor words](./public/housex-processing/llm-outputs/).
+- 📄 New [dataset](./public/mumu-processing/album-source-classification/) of AI-generated and human-generated album covers for Dance music, as extracted from the [MuMu dataset](./public/mumu-processing/image-splits/), and an accompanying strong lightweight [Mobilenet-v3 based classifier model](./research/models/surprise_estimation.py).
+- 📌 Novel computational creativity estimation pipeline for audiovisuals' generation involving Novelty, Creativity, and Value distributed across different modalities viz. `{audio, image}`.
+
+---
+
 ## Getting Started
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width=5% height=5%><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M304.2 501.5L158.4 320.3 298.2 185c2.6-2.7 1.7-10.5-5.3-10.5h-69.2c-3.5 0-7 1.8-10.5 5.3L80.9 313.5V7.5q0-7.5-7.5-7.5H21.5Q14 0 14 7.5v497q0 7.5 7.5 7.5h51.9q7.5 0 7.5-7.5v-109l30.8-29.3 110.5 140.6c3 3.5 6.5 5.3 10.5 5.3h66.9q5.3 0 6-3z"/></svg>
 
