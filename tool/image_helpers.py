@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 from glob import glob
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -60,6 +61,7 @@ magenta_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-styli
 # Load the surprise estimation pipeline
 class CreativeNet(nn.Module):
     def __init__(self, train_baseline_classifier = False, num_output_classes = 2, dropout_rate = 0.20):
+        super().__init__()
         
         # Set instance variables
         self.train_baseline_classifier = train_baseline_classifier
@@ -199,7 +201,7 @@ def get_surprise_score(input_image_path:str, model_path:str) -> Optional[str]:
                 transforms.ToTensor(),
         ])
 
-        img = Image.open(input_image_path)
+        img = Image.open(input_image_path).convert("RGB")
         transformed_img = transform(img=img)
         x = torch.Tensor(transformed_img)
         x = x.to(TORCH_DEVICE)
@@ -284,7 +286,7 @@ def neural_style_transfer_vanilla_stream(single_image_path:str, stream_image_dir
         num_images_generated = 0
         saved_output_file_names = []
 
-        for stream_image in stream_image_filenames:
+        for stream_image in tqdm(stream_image_filenames):
             output_file = f"{output_dir}/nst_{num_images_generated}.png"
             # Check OvA mode
             if ova_mode == "style":
