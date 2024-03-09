@@ -55,6 +55,7 @@ https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/1c69895e-1764-4a
 ---
 
 ####  Prompt topic: `Dystopian Robotic World`
+(💡 Inspiration from [Twitter](https://twitter.com/punpeddler_/status/1766461639476588729))
 
 **Static video**
 
