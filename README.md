@@ -2,11 +2,18 @@
 SpectroGrand: Generating interesting audiovisuals for text prompts.
 
 ![Architecture Diagram](./docs/static/Spectrogrand_Architecture_Diagram.png)
+---
 
-## Data Sources
-- [Images that Could Be Album Covers](https://www.kaggle.com/datasets/imreallyjohn/imagesalbumcovers)
-- [HouseX](https://github.com/Gariscat/HouseX)
-- [MuMu](https://www.upf.edu/web/mtg/mumu)
+## Getting Started
+<i class="fa-brands fa-kaggle"></i>
+
+To run the pipeline on Kaggle, please navigate over to [the Kaggle data release](https://www.kaggle.com/datasets/vijayjaisankar/spectrogrand-public-release/) and check out the notebook linked there. 
+
+<i class="fa-solid fa-laptop"></i>
+
+To run the pipeline locally, please follow the steps detailed in [this notebook](./spectrogrand_pipeline.ipynb).
+
+
 
 ## Outputs for Prompt topic: `Futuristic Spaceship`
 
