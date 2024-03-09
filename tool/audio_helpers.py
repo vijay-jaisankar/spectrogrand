@@ -2,7 +2,7 @@
     Collection of helper functions pertaining to the audio domain of spectrogrand
 """
 from diffusers import AudioLDM2Pipeline
-from typing import Optional
+from typing import Optional, List
 import scipy
 import numpy as np
 import librosa
@@ -16,7 +16,7 @@ from transformers import ClapModel, ClapProcessor
 
 
 # Load the AudioLDM pipeline
-audio_ldm_pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2-music", torch_dtype=torch.float16)
+audio_ldm_pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2-music")
 audio_ldm_pipeline.to(DEVICE)
 
 # Load the CLAP pipeline
@@ -30,7 +30,8 @@ clap_processor = ClapProcessor.from_pretrained("laion/clap-htsat-fused")
     @param text_prompt: Descriptor of the audio to be generated (@note The user is requested to be as verbose as possible)
     @param output_file_path: Path to which the generated audio is to saved
     @param num_inference_steps: Number of inference steps for the audioldm2-music model (@note The higher this value, the longer the po)
-
+    @param audio_length: Length of the audio piece (in s) (default: 10.0)
+    @param negative_prompt: Negative prompt to be passed to the audioldm2-music model (default: 'low quality, monotonous, boring')
 """
 def create_and_save_audio_file(text_prompt:str, output_file_path:str, num_inference_steps:int=500, audio_length:float=10.0, negative_prompt = "low quality, monotonous, boring") -> Optional[str]:
     try:
@@ -159,3 +160,36 @@ def load_wav_chunk(input_file_path:str, chunk_offset:float, chunk_duration:float
     except Exception as e:
         print(f"Error while loading chunk from {input_file_path}: {e}")
         return None, None
+    
+"""
+    @method create_and_save_audio_file_stream
+        Use the `audioldm2-music` model to generate synthetic audio conditioned on inputs
+    @param topic: Topic of the audio files to be generated
+    @param output_dir: Directory to which the generated audio files are to saved
+    @param num_inference_steps_list: List containing the number of inference steps (default: [500, 750])
+    @param audio_length: Length of the audio piece (in s) (default: 10.0)
+    @param negative_prompt: Negative prompt to be passed to the audioldm2-music model (default: 'low quality, monotonous, boring')
+"""
+def create_and_save_audio_file_stream(topic:str, output_dir:str, num_inference_steps_list:list=[500, 750], audio_length:float=10.0, negative_prompt = "low quality, monotonous, boring") -> Optional[List[str]]:
+    try:
+        global audio_ldm_pipeline
+        # Generate audio
+        # Keep running count of the current time index and number of images generated
+        num_audios_generated = 0
+        saved_output_file_names = []
+        
+        # Construct the text prompt
+        text_prompt = f"Jumpy electronic house music for {topic}"
+
+        for num_infer in num_inference_steps_list:
+            output_file = f"{output_dir}/audio{num_audios_generated}.wav"
+            output_file = create_and_save_audio_file(text_prompt=text_prompt, output_file_path=output_file, num_inference_steps=num_infer, audio_length=audio_length, negative_prompt=negative_prompt)
+            if output_file is not None:
+                saved_output_file_names.append(output_file)
+                num_audios_generated += 1
+
+        return saved_output_file_names
+    except Exception as e:
+        print(f"Error while generating and saving audio stream: {e}")
+        return None
+    
