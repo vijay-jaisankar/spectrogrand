@@ -10,7 +10,7 @@ import pickle
 
 import torch
 torch.random.manual_seed(42)
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 from transformers import ClapModel, ClapProcessor
 

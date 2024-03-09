@@ -19,11 +19,18 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 
-TORCH_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+TORCH_DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 TF_DEVICE = "/gpu:0" if torch.cuda.is_available() else "/cpu"
+# Use another GPU core for SDXL if possible
+SD_DEVICE = "cpu"
+if int(torch.cuda.device_count()) == 1:
+    SD_DEVICE = "cuda:0"
+else:
+    SD_DEVICE = "cuda:1"
 
 from diffusers import DiffusionPipeline
 
+# @note These defaults can be changed based on the user's preferences
 GENRE_COLOUR_MAPPING = {
     'future house' : ["blue", "red"],
     'bass house' : ["black", "purple"],
@@ -41,7 +48,7 @@ GENRE_WORD_MAPPING = {
 
 # Load the Stabke Duffusion XL pipeline
 sdxl_pipeline = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
-sdxl_pipeline.to(TORCH_DEVICE)
+sdxl_pipeline.to(SD_DEVICE)
 
 # Load the VILA pipeline
 vila_model = hub.load('https://tfhub.dev/google/vila/image/1')
@@ -60,7 +67,7 @@ class CreativeNet(nn.Module):
         self.dropout_rate = dropout_rate
         
         # Set the current device for tensor calculations
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
         # Baseline: MobileNet V3 small
         self.baseline = models.mobilenet_v3_small(weights = models.MobileNet_V3_Small_Weights.IMAGENET1K_V1)
@@ -126,10 +133,11 @@ def generate_and_save_image(prompt:str, output_file_path:str, num_inference_step
         Generate and save genre-driven candidate album covers
         @note To change the genre-mapping configs, rewrite GENRE_COLOR_MAPPING and/or GENRE_WORD_MAPPING before calling this function.
     @param genre_name: Name of the genre, as it appears in the keys of GENRE_COLOR_MAPPING and GENRE_WORD_MAPPING
+    @param topic: Topic of the music piece
     @param output_dir: Path to the parent directory where the contiguous melspectrogram images are to be stored
     @param num_inference_steps: Number of diffusion steps SDXL will take to generate the image (@note The higher this number, the longer the pipeline will take while maintaining higher-quality outputs) (default: 50)
 """
-def generate_and_save_image_stream(genre_name:str, output_dir:str, num_inference_steps:int=50) -> Optional[List[str]]:
+def generate_and_save_image_stream(genre_name:str, topic:str, output_dir:str, num_inference_steps:int=50) -> Optional[List[str]]:
     try:
         global GENRE_COLOUR_MAPPING, GENRE_WORD_MAPPING
         # Keep running count of the current time index and number of images generated
@@ -141,7 +149,7 @@ def generate_and_save_image_stream(genre_name:str, output_dir:str, num_inference
             for word in GENRE_WORD_MAPPING[genre_name]:
                 output_file = f"{output_dir}/sdxl{num_images_generated}.png"
                 # Construct the prompt
-                prompt = f"{colour} these colored album cover for music that {word}"
+                prompt = f"{colour} colored album cover for music about {topic} that {word}"
                 output_file = generate_and_save_image(prompt=prompt,output_file_path=output_file,num_inference_steps=num_inference_steps)
                 if output_file is not None:
                     saved_output_file_names.append(output_file)

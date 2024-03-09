@@ -11,7 +11,7 @@ from PIL import Image
 import torch
 from torchvision import transforms
 torch.random.manual_seed(42)
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 IDX_TO_LABEL_MAPPING = {0:'future house', 1:'bass house', 2:'progressive house', 3:'melodic house'}
 
