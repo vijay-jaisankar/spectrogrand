@@ -6,7 +6,7 @@ SpectroGrand: Generating interesting audiovisuals for text prompts.
 ---
 
 ## About the project
-[Spectrograms](https://en.wikipedia.org/wiki/Spectrogram#:~:text=A%20spectrogram%20is%20a%20visual,sonographs%2C%20voiceprints%2C%20or%20voicegrams.) are **visual representations of audio samples** often used in Engineering applications as features for various downstream tasks. We unlock the **artistic value of spectrograms** and use them in both scientific and artistic domains through Spectrogrand: a pipeline to generate **interesting melspectrogram-driven audiovisuals** given text topic prompts. We also bake in lightweight **domain-driven computational creativity** assessment throughout steps the generation process.  
+[Spectrograms](https://en.wikipedia.org/wiki/Spectrogram#:~:text=A%20spectrogram%20is%20a%20visual,sonographs%2C%20voiceprints%2C%20or%20voicegrams.) are **visual representations of audio samples** often used in Engineering applications as features for various downstream tasks. We unlock the **artistic value of spectrograms** and use them in both scientific and artistic domains through Spectrogrand: a pipeline to generate **interesting melspectrogram-driven audiovisuals** given text topic prompts. We also bake in lightweight **domain-driven computational creativity** assessment throughout steps of the generation process.  
 
 In this regard, this pipeline has the following steps:
 - We use [audioldm2-music](https://huggingface.co/cvssp/audioldm2-music) to generate multiple candidate house music songs for the topic text prompt. We then estimate each candidate's **novelty** from human-generated house music songs (collected from the [HouseX](https://github.com/Gariscat/HouseX) dataset), and select the most novel song for our pipeline.
@@ -20,7 +20,7 @@ In this regard, this pipeline has the following steps:
 
 ## Key contributions
 - 📄 New [corpus](./public/housex-processing/corpus/) with [EDMReviewer](https://edmreviewer.com/) reviews for [selected artists from the HouseX dataset](./public/housex-processing/selected_artists.txt) with [LLM-generated descriptor words](./public/housex-processing/llm-outputs/).
-- 📄 New [dataset](./public/mumu-processing/album-source-classification/) of AI-generated and human-generated album covers for Dance music, as extracted from the [MuMu dataset](./public/mumu-processing/image-splits/), and an accompanying strong lightweight [Mobilenet-v3 based classifier model](./research/models/surprise_estimation.py).
+- 📄 New [dataset](./public/mumu-processing/album-source-classification/) of AI-generated and human-generated album covers for Dance music, as extracted from the [MuMu dataset](https://www.upf.edu/web/mtg/mumu), and an accompanying strong lightweight [Mobilenet-v3 based classifier model](./research/models/surprise_estimation.py).
 - 📌 Novel computational creativity estimation pipeline for audiovisuals' generation involving Novelty, Creativity, and Value distributed across different modalities viz. `{audio, image}`.
 
 ---
