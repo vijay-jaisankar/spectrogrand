@@ -9,12 +9,12 @@ SpectroGrand: Generating interesting audiovisuals for text prompts.
 [Spectrograms](https://en.wikipedia.org/wiki/Spectrogram#:~:text=A%20spectrogram%20is%20a%20visual,sonographs%2C%20voiceprints%2C%20or%20voicegrams.) are **visual representations of audio samples** often used in Engineering applications as features for various downstream tasks. We unlock the **artistic value of spectrograms** and use them in both scientific and artistic domains through Spectrogrand: a pipeline to generate **interesting melspectrogram-driven audiovisuals** given text topic prompts. We also bake in lightweight **domain-driven computational creativity** assessment throughout steps the generation process.  
 
 In this regard, this pipeline has the following steps:
-- We use [audioldm2-music](https://huggingface.co/cvssp/audioldm2-music) to generate multiple candidate house music songs for the topic text prompt. We then estimate each candidate's **novelty** from human-generated house music songs (collected from the [HouseX](https://github.com/Gariscat/HouseX) dataset.), and select the most novel song for our pipeline.
+- We use [audioldm2-music](https://huggingface.co/cvssp/audioldm2-music) to generate multiple candidate house music songs for the topic text prompt. We then estimate each candidate's **novelty** from human-generated house music songs (collected from the [HouseX](https://github.com/Gariscat/HouseX) dataset), and select the most novel song for our pipeline.
 - Then, we generate melspectrograms for the song as a whole, and for chunks of the sample. These numerous images convey local intensity and temporal diversity scattered throughout different zones of the song.
 - We use the parent spectrogram to deduce the genre of the song. Our [VGG19-BN based-model with augmented train-time transforms](./research/models/genre_classification.py) is the current SOTA on the HouseX-full-image task 🥳
 - We then use [stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) to generate candidate album covers for this song. The selected genre defines and augments the prompts through selecting base colours and [descriptor words](./public/housex-processing/corpus). We then estimate each candidate's **value** and **surprisingness** based on its aestheticness, and how likely it can fool a strong custom classifier (trained on human-generated and AI-generated album covers) into believing that the candidate is more human-generated. We select the image with the highest equiweighted score for our pipeline.
 - We then use [magenta](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2) to perform arbitrary image style transfer on the selected album cover image and each of the song chunk's melspectrograms.
-- At the end of the pipeline, one can generate **three** audiovisual videos for a given theme text prompt. [Example videos](#outputs-for-prompt-topic-futuristic-spaceship)
+- At the end of the pipeline, one can generate **three** audiovisual videos for a given theme text prompt.
 
 ---
 
@@ -36,13 +36,33 @@ To run the pipeline locally, please follow the steps detailed in [this notebook]
 
 ---
 
-## Outputs for Prompt topic: `Futuristic Spaceship`
+## Outputs of Spectrogrand
 
-### Static video
+---
+
+####  Prompt topic: `Futuristic Spaceship`
+
+**Static video**
+
 https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/e2782e91-9a3d-4e00-b610-b119395cd872
 
-### Dynamic videos
+**Dynamic videos**
+
 https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/112ee67a-dc27-4d87-ad06-78bb3104f4c8
 
 https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/1c69895e-1764-4a45-92be-553949d5af47
 
+---
+
+####  Prompt topic: `Dystopian Robotic World`
+
+**Static video**
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/be0f32e5-c4f5-4b9d-88a3-2a5cc65dd30e
+
+
+**Dynamic videos**
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/3906e5a2-549c-4851-a81c-d7f5dd2b3f29
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/3fb2ed9b-d694-49e7-904c-7422038d7f20
