@@ -67,3 +67,10 @@ https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/be0f32e5-c4f5-4b
 https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/3906e5a2-549c-4851-a81c-d7f5dd2b3f29
 
 https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/3fb2ed9b-d694-49e7-904c-7422038d7f20
+
+---
+
+## Acknowledgements and Contact Details
+This project was done under the guidance of [Prof. Dinesh Babu Jayagopi](https://www.iiitb.ac.in/faculty/dinesh-babu-jayagopi).
+
+Corresponding email: vijay.jaisankar@iiitb.ac.in
