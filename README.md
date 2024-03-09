@@ -11,8 +11,10 @@ SpectroGrand: Generating interesting audiovisuals for text prompts.
 ## Outputs for Prompt topic: `Futuristic Spaceship`
 
 ### Static video
-[<img src="./docs/static/spaceships/thumbnails/static_thumb.png" width="50%">](./docs/static/spaceships/videos/static.mp4)
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/e2782e91-9a3d-4e00-b610-b119395cd872
 
 ### Dynamic videos
-[<img src="./docs/static/spaceships/thumbnails/dynamic1_thumb.png" width="50%">](./docs/static/spaceships/videos/dynamic1_thumb.mp4)
-[<img src="./docs/static/spaceships/thumbnails/dynamic2_thumb.png" width="50%">](./docs/static/spaceships/videos/dynamic2_thumb.mp4)
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/112ee67a-dc27-4d87-ad06-78bb3104f4c8
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/1c69895e-1764-4a45-92be-553949d5af47
+
