@@ -5,13 +5,14 @@ from typing import Optional, List
 import librosa
 import numpy as np
 import matplotlib.pyplot as plt
-from audio_helpers import load_wav_chunk, load_wav_file
 from PIL import Image
 
 import torch
 from torchvision import transforms
 torch.random.manual_seed(42)
 DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+from audio_helpers import load_wav_file, load_wav_chunk
 
 IDX_TO_LABEL_MAPPING = {0:'future house', 1:'bass house', 2:'progressive house', 3:'melodic house'}
 
@@ -67,7 +68,7 @@ def generate_and_save_melspectrogram_stream(input_file_path:str, output_dir:str,
         while float(current_chunk_time_end) <= float(parent_duration):
             output_file = f"{output_dir}/melspec_{num_images_generated}.png"
             # Load chunk data
-            y, sr = load_wav_chunk(input_file_path=input_file_path,chunk_offset=current_chunk_time_start,chunk_duration=chunk_duration)
+            sr, y = load_wav_chunk(input_file_path=input_file_path,chunk_offset=current_chunk_time_start,chunk_duration=chunk_duration)
             # Construct melspectrogram
             output_file = generate_and_save_melspectrogram(input_data=y,input_sampling_rate=sr,output_file_path=output_file)
             if output_file is not None:
@@ -101,7 +102,7 @@ def get_classified_genre(input_spectrogram_path:str, model_path:str) -> Optional
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        img = Image.open(input_spectrogram_path)
+        img = Image.open(input_spectrogram_path).convert('RGB')
         transformed_img = transform(img=img)
         x = torch.Tensor(transformed_img)
         x = x.to(DEVICE)
