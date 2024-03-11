@@ -70,6 +70,21 @@ https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/3fb2ed9b-d694-49
 
 ---
 
+####  Prompt topic: `Computer Vision`
+
+**Static video**
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/bf373d21-9a05-4264-9637-e75f729008f8
+
+
+**Dynamic videos**
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/4fd9b01b-4299-4f26-8e0e-6b1d1bc4c844
+
+https://github.com/vijay-jaisankar/spectrogrand/assets/56185979/355318aa-514a-4f06-88d6-92dcad099760
+
+---
+
 ## Acknowledgements and Contact Details
 This project was done under the guidance of [Prof. Dinesh Babu Jayagopi](https://www.iiitb.ac.in/faculty/dinesh-babu-jayagopi).
 
