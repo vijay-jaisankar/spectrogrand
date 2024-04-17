@@ -306,3 +306,4 @@ def neural_style_transfer_vanilla_stream(single_image_path:str, stream_image_dir
     except Exception as e:
         print(f"Error while generating and saving neural style transfer image stream: {e}")
         return None
+    

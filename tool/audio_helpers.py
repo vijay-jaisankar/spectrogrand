@@ -7,6 +7,7 @@ import scipy
 import numpy as np
 import librosa
 import pickle
+from essentia.standard import MonoLoader, TensorflowPredictMusiCNN, TensorflowPredict2D
 
 import torch
 torch.random.manual_seed(42)
@@ -29,7 +30,7 @@ clap_processor = ClapProcessor.from_pretrained("laion/clap-htsat-fused")
         Use the `audioldm2-music` model to generate synthetic audio conditioned on inputs
     @param text_prompt: Descriptor of the audio to be generated (@note The user is requested to be as verbose as possible)
     @param output_file_path: Path to which the generated audio is to saved
-    @param num_inference_steps: Number of inference steps for the audioldm2-music model (@note The higher this value, the longer the po)
+    @param num_inference_steps: Number of inference steps for the audioldm2-music model (@note The higher this value, the longer the time for execution of this step)
     @param audio_length: Length of the audio piece (in s) (default: 10.0)
     @param negative_prompt: Negative prompt to be passed to the audioldm2-music model (default: 'low quality, monotonous, boring')
 """
@@ -193,3 +194,21 @@ def create_and_save_audio_file_stream(topic:str, output_dir:str, num_inference_s
         print(f"Error while generating and saving audio stream: {e}")
         return None
     
+"""
+    @method get_danceability_score
+        Use Essentia to score an audio track on its danceability
+    @input input_file_path: Path to the input audio file
+    @input embedding_model_path: Path to the essentia encoder model (@note To ensure compatibility, this should be a `.pb` file)
+    @input danceability_model_path: Path to the essentia danceability computation model (@note To ensure compatibility, this should be a `.pb` file)
+"""
+def get_danceability_score(input_file_path:str, embedding_model_path:str, danceability_model_path:str) -> Optional[float]:
+    # Load audio and get embeddings
+    audio = MonoLoader(filename=input_file_path, sampleRate=16000, resampleQuality=4)()
+    embedding_model = TensorflowPredictMusiCNN(graphFilename=embedding_model_path, output="model/dense/BiasAdd")
+    embeddings = embedding_model(audio)
+
+    # Load model and get predictions
+    model = TensorflowPredict2D(graphFilename=danceability_model_path, output="model/Softmax")
+    predictions = model(embeddings)
+    mean_danceability_score = np.mean(predictions[:,0])
+    return mean_danceability_score
