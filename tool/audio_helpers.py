@@ -202,13 +202,17 @@ def create_and_save_audio_file_stream(topic:str, output_dir:str, num_inference_s
     @input danceability_model_path: Path to the essentia danceability computation model (@note To ensure compatibility, this should be a `.pb` file)
 """
 def get_danceability_score(input_file_path:str, embedding_model_path:str, danceability_model_path:str) -> Optional[float]:
-    # Load audio and get embeddings
-    audio = MonoLoader(filename=input_file_path, sampleRate=16000, resampleQuality=4)()
-    embedding_model = TensorflowPredictMusiCNN(graphFilename=embedding_model_path, output="model/dense/BiasAdd")
-    embeddings = embedding_model(audio)
+    try:
+        # Load audio and get embeddings
+        audio = MonoLoader(filename=input_file_path, sampleRate=16000, resampleQuality=4)()
+        embedding_model = TensorflowPredictMusiCNN(graphFilename=embedding_model_path, output="model/dense/BiasAdd")
+        embeddings = embedding_model(audio)
 
-    # Load model and get predictions
-    model = TensorflowPredict2D(graphFilename=danceability_model_path, output="model/Softmax")
-    predictions = model(embeddings)
-    mean_danceability_score = np.mean(predictions[:,0])
-    return mean_danceability_score
+        # Load model and get predictions
+        model = TensorflowPredict2D(graphFilename=danceability_model_path, output="model/Softmax")
+        predictions = model(embeddings)
+        mean_danceability_score = np.mean(predictions[:,0])
+        return mean_danceability_score
+    except Exception as e:
+        print(f"Error while computing danceability score for {input_file_path}: {e}")
+        return None
