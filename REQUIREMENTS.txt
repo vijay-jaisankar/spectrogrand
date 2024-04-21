@@ -11,3 +11,4 @@ tqdm
 transformers
 numba
 ffmpeg
+essentia-tensorflow
