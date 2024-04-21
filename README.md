@@ -1,5 +1,5 @@
 # Spectrogrand
-SpectroGrand: Generating interesting audiovisuals for text prompts.
+Spectrogrand: Generating interesting audiovisuals for text prompts.
 
 ![Architecture Diagram](./docs/static/Spectrogrand_Architecture_Diagram.png)
 
@@ -14,7 +14,8 @@ In this regard, this pipeline has the following steps:
 - We use the parent spectrogram to deduce the genre of the song. Our [VGG19-BN based-model with augmented train-time transforms](./research/models/genre_classification.py) is the current SOTA on the HouseX-full-image task 🥳
 - We then use [stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) to generate candidate album covers for this song. The selected genre defines and augments the prompts through selecting base colours and [descriptor words](./public/housex-processing/corpus). We then estimate each candidate's **value** and **surprisingness** based on its aestheticness, and how likely it can fool a strong custom classifier (trained on human-generated and AI-generated album covers) into believing that the candidate is more human-generated. We select the image with the highest equiweighted score for our pipeline.
 - We then use [magenta](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2) to perform arbitrary image style transfer on the selected album cover image and each of the song chunk's melspectrograms.
-- At the end of the pipeline, one can generate **three** audiovisual videos for a given theme text prompt.
+- At the end of the pipeline, one can hence generate a static video and two spectrogram-driven audiovisual videos. As an additional feature ✨, we also support [
+stable-video-diffusion-img2vid-xt](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt) to automatically generate a music video of arbitrary length conditioned on the chosen album cover image.
 
 ---
 
