@@ -19,6 +19,10 @@ torch.random.manual_seed(42)
 import tensorflow as tf
 import tensorflow_hub as hub
 
+from diffusers import StableVideoDiffusionPipeline, DiffusionPipeline
+from diffusers.utils import load_image, export_to_video
+
+
 
 TORCH_DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 TF_DEVICE = "/gpu:0" if torch.cuda.is_available() else "/cpu"
@@ -29,7 +33,6 @@ if int(torch.cuda.device_count()) == 1:
 else:
     SD_DEVICE = "cuda:1"
 
-from diffusers import DiffusionPipeline
 
 # @note These defaults can be changed based on the user's preferences
 GENRE_COLOUR_MAPPING = {
@@ -57,6 +60,11 @@ vila_predict_fn = vila_model.signatures['serving_default']
 
 # Load the Magenta pipeline
 magenta_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
+
+# Load the StableDiffusionVideo Pipeline
+sdv_pipeline = StableVideoDiffusionPipeline.from_pretrained("stabilityai/stable-video-diffusion-img2vid-xt", torch_dtype=torch.float16, variant="fp16")
+sdv_pipeline.enable_model_cpu_offload()
+sdv_pipeline.unet.enable_forward_chunking()
 
 # Load the surprise estimation pipeline
 class CreativeNet(nn.Module):
@@ -218,7 +226,7 @@ def get_surprise_score(input_image_path:str, model_path:str) -> Optional[str]:
             selected_score = float(y[0][1].item()) # Order of scores: ai, human
         return selected_score
     except Exception as e:
-        print(f"Error while classifying genre of {input_image_path}: {e}")
+        print(f"Error while estimating surprise score of {input_image_path}: {e}")
         return None
     
 """
@@ -307,3 +315,43 @@ def neural_style_transfer_vanilla_stream(single_image_path:str, stream_image_dir
         print(f"Error while generating and saving neural style transfer image stream: {e}")
         return None
     
+"""
+    @method image_to_video_contiguous
+        Generate a contiguous set of frames from a given input starting frame
+    @param start_image_path: Path to the input image that serves as the starting frame for the video
+    @param output_dir: Path to the parent directory where the contiguous frames' images are to be stored
+    @param n_frames: Number of frames to be generated (@note default: 100)
+"""
+def image_to_video_contiguous(start_image_path:str, output_dir:str, n_frames:int=100) -> Optional[List[str]]:
+    try:
+        global sdv_pipeline
+        # Keep running count of the current time index and number of images generated
+        num_images_generated = 0
+        saved_output_file_names = []
+
+        # Load input image
+        all_frames = []
+        image = load_image(start_image_path)
+        image = image.resize((1024, 576))
+        all_frames = [image]
+        generator = torch.manual_seed(42)
+
+        # Iterate through the pipeline until the desired number of frames is reached
+        while len(all_frames) <= n_frames:
+            base_image = all_frames[-1]
+            frames = sdv_pipeline(base_image, decode_chunk_size=1, generator=generator).frames[0]
+            all_frames.extend(frames)
+
+        # Save the individual frames
+        all_frames = all_frames[:n_frames]
+        for frame in all_frames:
+            save_path = f"{output_dir}/video_frame_{num_images_generated}.png"
+            frame.save(save_path)
+            num_images_generated += 1
+            saved_output_file_names.append(save_path)
+
+        return saved_output_file_names
+
+    except Exception as e:
+        print(f"Error while generating and saving frames from the image to video pipeline: {e}")
+        return None
