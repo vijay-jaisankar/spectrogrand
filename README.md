@@ -10,8 +10,8 @@ Spectrogrand: Generating interesting audiovisuals for text prompts.
 
 In this regard, this pipeline has the following steps:
 - We use [audioldm2-music](https://huggingface.co/cvssp/audioldm2-music) to generate multiple candidate house music songs for the topic text prompt. We then estimate each candidate's **novelty** from human-generated house music songs (collected from the [HouseX](https://github.com/Gariscat/HouseX) dataset) and **value** through its danceability score calculated using [MusiCNN](https://essentia.upf.edu/reference/std_TensorflowPredictMusiCNN.html). We select the song with the highest equiweighted score for our pipeline.
-- Then, we generate melspectrograms for the song as a whole, and for chunks of the sample. These numerous images convey local intensity and temporal diversity scattered throughout different zones of the song.
-- We use the parent spectrogram to deduce the genre of the song. Our [Resnet-101 based-model with augmented train-time transforms](./research/models/genre_classification.py) is the current SOTA on the HouseX-full-image task 🥳
+- Then, we generate melspectrograms for the song as a whole, and for periodic chunks of the sample. These numerous images convey local intensity and temporal diversity scattered throughout different zones of the song.
+- We use the parent spectrogram to deduce the genre of the song. Our [Resnet-101 based-model with augmented train-time transforms](./research/models/genre_classification.py) is the current SOTA on the `HouseX-full-image` task 🥳
 - We then use [stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) to generate candidate album covers for this song. The selected genre defines and augments the prompts through selecting base colours and [descriptor words](./public/housex-processing/corpus). We then estimate each candidate's **value** and **surprisingness** based on its aestheticness, and how likely it can fool a strong custom classifier (trained on human-generated and AI-generated album covers) into believing that the candidate is more human-generated. We select the image with the highest equiweighted score for our pipeline.
 - We then use [magenta](https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2) to perform arbitrary image style transfer on the selected album cover image and each of the song chunk's melspectrograms.
 - At the end of the pipeline, one can hence generate a static video and two spectrogram-driven audiovisual videos. As an additional feature ✨, we also support [
@@ -22,7 +22,7 @@ stable-video-diffusion-img2vid-xt](https://huggingface.co/stabilityai/stable-vid
 ## Key contributions
 - 📄 New [corpus](./public/housex-processing/corpus/) with [EDMReviewer](https://edmreviewer.com/) reviews for [selected artists from the HouseX dataset](./public/housex-processing/selected_artists.txt) with [LLM-generated descriptor words](./public/housex-processing/llm-outputs/).
 - 📄 New [dataset](./public/mumu-processing/album-source-classification/) of AI-generated and human-generated album covers for Dance music, as extracted from the [MuMu dataset](https://www.upf.edu/web/mtg/mumu), and an accompanying strong lightweight [Mobilenet-v3 based classifier model](./research/models/surprise_estimation.py).
-- 📌 Novel computational creativity estimation pipeline for audiovisuals' generation involving Novelty, Creativity, and Value distributed across different modalities viz. `{audio, image}`.
+- 📌 Novel computational creativity estimation pipeline for audiovisuals' generation involving `Novelty, Creativity, and Value` distributed across different modalities viz. `{audio, image}`.
 
 ---
 
