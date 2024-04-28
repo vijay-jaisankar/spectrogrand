@@ -1,0 +1,1 @@
+The second image is more creative. While both images are visually striking, the second image has a more complex composition with multiple elements such as an astronaut, a detailed space suit texture, a colorful nebula background, and various celestial bodies. The level of detail and the variety of colors and shapes in the second image contribute to its higher creative quality.
