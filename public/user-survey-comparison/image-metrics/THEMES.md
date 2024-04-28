@@ -1,4 +1,5 @@
-## Spectrogrand User Study: Themes
+## Spectrogrand: Image survey themes
+
 - Fast Car
 - Space Explorer
 - The Matrix
