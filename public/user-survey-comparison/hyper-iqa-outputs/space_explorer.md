@@ -1,7 +1,0 @@
-## Pool 1
-HyperIQA:64.8746
-HyperIQA+NT:64.7696
-
-## Pool 2
-HyperIQA:57.7891
-HyperIQA+NT:59.1621
