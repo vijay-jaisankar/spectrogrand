@@ -7,7 +7,7 @@ import scipy
 import numpy as np
 import librosa
 import pickle
-from essentia.standard import MonoLoader, TensorflowPredictMusiCNN, TensorflowPredict2D
+from essentia.standard import MonoLoader, TensorflowPredictEffnetDiscogs, TensorflowPredict2D
 
 import torch
 torch.random.manual_seed(42)
@@ -205,7 +205,7 @@ def get_danceability_score(input_file_path:str, embedding_model_path:str, dancea
     try:
         # Load audio and get embeddings
         audio = MonoLoader(filename=input_file_path, sampleRate=16000, resampleQuality=4)()
-        embedding_model = TensorflowPredictMusiCNN(graphFilename=embedding_model_path, output="model/dense/BiasAdd")
+        embedding_model = TensorflowPredictEffnetDiscogs(graphFilename=embedding_model_path, output="PartitionedCall:1")
         embeddings = embedding_model(audio)
 
         # Load model and get predictions
