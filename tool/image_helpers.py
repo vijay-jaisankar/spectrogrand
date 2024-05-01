@@ -36,10 +36,10 @@ else:
 
 # @note These defaults can be changed based on the user's preferences
 GENRE_COLOUR_MAPPING = {
-    'future house' : ["blue", "red"],
+    'future house' : ["dark blue", "red"],
     'bass house' : ["black", "purple"],
     'progressive house' : ["orange", "yellow"],
-    'melodic house' : ["green", "blue"]
+    'melodic house' : ["green", "light blue"]
 }
 
 GENRE_WORD_MAPPING = {
