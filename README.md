@@ -1,7 +1,8 @@
 # Spectrogrand
-Spectrogrand: Generating interesting audiovisuals for text prompts.
-
 ![Architecture Diagram](./docs/static/Spectrogrand_Architecture_Diagram.png)
+
+---
+**Spectrogrand: Computational Creativity Driven Audiovisuals' Generation From Text Prompts** has been accepted as a full research paper at the [Indian Conference on Computer Vision, Graphics and Image Processing (ICVGIP) 2024](https://icvgip.in/)! 🎉
 
 ---
 
