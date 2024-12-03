@@ -2,7 +2,7 @@ diffusers
 scipy
 numpy
 librosa
-moviepy
+moviepy==1.0.3
 matplotlib
 pillow
 torch
